@@ -1,0 +1,10 @@
+project/
+├── main.py                 # Einstiegspunkt
+├── gui/
+│   ├── __init__.py         # Leere Datei, um "gui" als Modul zu markieren
+│   ├── main_gui.py         # Haupt-GUI-Komponenten
+│   ├── table.py            # Tabellen-Logik
+│   └── debug.py            # Debug-Fenster
+├── config.py               # Konfigurationsmanagement
+├── clipboard_monitor.py    # Clipboard-Überwachungslogik
+└── utils.py                # Helferfunktionen

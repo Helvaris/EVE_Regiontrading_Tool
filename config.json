@@ -1,0 +1,40 @@
+{
+    "window_position": {
+        "x": 460,
+        "y": 308
+    },
+    "table_data": [
+        {
+            "ISK": 32000000,
+            "Prozent": 50
+        },
+        {
+            "ISK": 16000000,
+            "Prozent": 55
+        },
+        {
+            "ISK": 8000000,
+            "Prozent": 60
+        },
+        {
+            "ISK": 4000000,
+            "Prozent": 65
+        },
+        {
+            "ISK": 2000000,
+            "Prozent": 70
+        },
+        {
+            "ISK": 2,
+            "Prozent": 74
+        },
+        {
+            "ISK": 1,
+            "Prozent": 75
+        },
+        {
+            "ISK": 3,
+            "Prozent": 73
+        }
+    ]
+}
