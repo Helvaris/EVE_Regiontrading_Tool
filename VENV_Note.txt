@@ -1,0 +1,5 @@
+Starting:
+.\VENV\Scripts\Activate
+
+Ending:
+deactivate
