@@ -1,7 +1,0 @@
-Aktualisieren: Vor jeder Arbeit:
-git pull origin main
-
-Synchronisieren: Nach jeder Arbeit:
-git add .
-git commit -m "Kurze Beschreibung"
-git push origin main
