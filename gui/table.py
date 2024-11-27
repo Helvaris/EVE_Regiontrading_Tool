@@ -14,8 +14,16 @@ class Table:
         for row in self.data:
             self.tree.insert("", "end", values=row)
 
-    def sort_column(self, col, index):
+    def add_row(self, isk, percent):
+        self.tree.insert("", "end", values=(isk, percent))
+
+    def delete_selected_row(self):
+        selected_item = self.tree.selection()
+        for item in selected_item:
+            self.tree.delete(item)
+
+    def sort_column(self, col, reverse):
         data = [(self.tree.set(k, col), k) for k in self.tree.get_children("")]
-        data.sort(reverse=False if index == 0 else True, key=lambda x: float(x[0].replace("'", "")))
+        data.sort(reverse=reverse, key=lambda x: float(x[0].replace("'", "")))
         for index, (val, k) in enumerate(data):
             self.tree.move(k, "", index)

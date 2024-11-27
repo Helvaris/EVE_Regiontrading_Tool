@@ -30,6 +30,22 @@ class MainGUI:
         self.table.heading("Prozent", text="Prozent")
         self.table.grid(row=2, column=0, columnspan=3, sticky="nsew")
 
+    def toggle_debug_window(self):
+        if self.debug_window and self.debug_window.winfo_exists():
+            self.debug_window.deiconify()
+            return
+
+        self.debug_window = tk.Toplevel(self.root)
+        self.debug_window.title("Debug-Fenster")
+        self.debug_window.geometry("400x300")
+        self.debug_log = tk.Text(self.debug_window, state="disabled")
+        self.debug_log.pack(fill=tk.BOTH, expand=True)
+
+        def close_debug_window():
+            self.debug_window.withdraw()  # Debug-Fenster nur verstecken, nicht zerstören
+
+        self.debug_window.protocol("WM_DELETE_WINDOW", close_debug_window)
+
     def start_clipboard_monitor(self):
         thresholds = [
             {'ISK': 1.0, 'Prozent': 75},

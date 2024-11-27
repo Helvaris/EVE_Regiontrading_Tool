@@ -4,13 +4,14 @@ from utils import is_valid_number, calculate_value
 
 def monitor_clipboard(thresholds, append_debug_log, input_label, output_label, threshold_label, root):
     last_clipboard_value = None
+    last_calculated_value = None  # Neu: Zuletzt berechneter Wert speichern
+
     while True:
         try:
-            # Lese den Clipboard-Inhalt
             clipboard_content = pyperclip.paste()
 
-            # Skip, wenn Inhalt unverändert
-            if clipboard_content == last_clipboard_value:
+            # Skip, wenn Inhalt unverändert oder bereits berechnet
+            if clipboard_content == last_clipboard_value and clipboard_content == last_calculated_value:
                 sleep(1)
                 continue
             last_clipboard_value = clipboard_content
@@ -25,16 +26,16 @@ def monitor_clipboard(thresholds, append_debug_log, input_label, output_label, t
             input_value = float(clipboard_content.replace(",", "").replace("'", ""))
             output_value, applied_threshold = calculate_value(input_value, thresholds)
 
-            # Update der GUI-Labels
+            # Update GUI und Clipboard
             input_label.config(text=f"Eingabe: {format(input_value, '.2f')}")
             output_label.config(text=f"Ausgabe: {format(output_value, '.2f')}")
             threshold_label.config(text=f"Prozent: {applied_threshold}%")
-
-            # Clipboard mit dem berechneten Wert aktualisieren
             pyperclip.copy(f"{format(output_value, '.2f')}")
+
+            # Speichern des berechneten Wertes
+            last_calculated_value = f"{format(output_value, '.2f')}"
             append_debug_log(f"Berechnet: Eingabe={input_value}, Ausgabe={output_value}, Prozent={applied_threshold}")
 
-            # GUI aktualisieren
             root.update_idletasks()
             root.update()
             sleep(1)
