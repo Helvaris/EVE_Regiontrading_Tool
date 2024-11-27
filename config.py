@@ -3,28 +3,19 @@ import os
 
 CONFIG_FILE = "config.json"
 
-def save_window_position(root, config_path="config.json"):
-    try:
-        geometry = root.geometry()
-        with open(config_path, "r") as f:
-            config = json.load(f)
-        config["window_position"] = geometry
-        with open(config_path, "w") as f:
-            json.dump(config, f, indent=4)
-    except FileNotFoundError:
-        # Erstelle neue Config-Datei, falls sie nicht existiert
-        with open(config_path, "w") as f:
-            json.dump({"window_position": geometry}, f, indent=4)
-    except Exception as e:
-        print(f"Fehler beim Speichern der Fensterposition: {e}")
+def save_window_position(root):
+    position = {
+        "x": root.winfo_x(),
+        "y": root.winfo_y(),
+        "width": root.winfo_width(),
+        "height": root.winfo_height(),
+    }
+    with open(CONFIG_FILE, "w") as file:
+        json.dump(position, file)
 
-def restore_window_position(root, config_path="config.json"):
-    try:
-        with open(config_path, "r") as f:
-            config = json.load(f)
-            geometry = config.get("window_position", "800x600")
-            root.geometry(geometry)
-    except FileNotFoundError:
-        print("Fensterposition nicht gefunden, Standardgröße wird verwendet.")
-    except Exception as e:
-        print(f"Fehler beim Wiederherstellen der Fensterposition: {e}")
+def restore_window_position(root):
+    if not os.path.exists(CONFIG_FILE):
+        return
+    with open(CONFIG_FILE, "r") as file:
+        position = json.load(file)
+        root.geometry(f"{position['width']}x{position['height']}+{position['x']}+{position['y']}")
