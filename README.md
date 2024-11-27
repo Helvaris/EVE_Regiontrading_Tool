@@ -23,14 +23,14 @@ Installation
 
 If you’d like to try the application:
 
-    Clone the repository:
+Clone the repository:
     git clone https://github.com/Helvaris/EVE_Regiontrading_Tool.git
     cd EVE_Regiontrading_Tool
 
-    Install dependencies (Python 3.8+ required):
+Install dependencies (Python 3.8+ required):
     pip install -r requirements.txt
 
-    Start the application:
+Start the application:
     python main.py
 
 License
