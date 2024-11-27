@@ -6,7 +6,9 @@ def is_valid_number(value):
         return False
 
 def calculate_value(input_value, thresholds):
+    thresholds = sorted(thresholds, key=lambda x: x["ISK"], reverse=True)
     for threshold in thresholds:
         if input_value >= threshold["ISK"]:
-            return input_value + input_value * threshold["Prozent"] / 100, threshold["Prozent"]
+            percentage = threshold["Prozent"]
+            return input_value + (input_value * percentage / 100), percentage
     return input_value, 0

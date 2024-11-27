@@ -1,46 +1,61 @@
 import tkinter as tk
-from .table import Table
-from config import save_window_position, restore_window_position
+from tkinter import ttk
+from threading import Thread
 from clipboard_monitor import monitor_clipboard
-from debug import DebugWindow
+from config import save_window_position, restore_window_position
 
 class MainGUI:
     def __init__(self, root):
         self.root = root
         self.root.title("EVE Trading Tool")
-        self.debug_window = None
+        restore_window_position(self.root)
+
+        self.debug_logs = []
         self.create_ui()
+        self.start_clipboard_monitor()
 
     def create_ui(self):
-        self.info_frame = tk.Frame(self.root)
-        self.info_frame.pack(side="top", fill="x")
+        self.input_label = tk.Label(self.root, text="Eingabe: ")
+        self.input_label.grid(row=0, column=0, padx=5, pady=5)
+        self.output_label = tk.Label(self.root, text="Ausgabe: ")
+        self.output_label.grid(row=0, column=1, padx=5, pady=5)
+        self.threshold_label = tk.Label(self.root, text="Prozent: ")
+        self.threshold_label.grid(row=0, column=2, padx=5, pady=5)
 
-        self.input_label = tk.Label(self.info_frame, text="Eingabe: 0.00")
-        self.input_label.pack(side="left")
+        self.debug_checkbox = tk.Checkbutton(self.root, text="Debug")
+        self.debug_checkbox.grid(row=1, column=0, sticky="w")
 
-        self.output_label = tk.Label(self.info_frame, text="Ausgabe: 0.00")
-        self.output_label.pack(side="left")
+        self.table = ttk.Treeview(self.root, columns=("ISK", "Prozent"), show="headings")
+        self.table.heading("ISK", text="ISK")
+        self.table.heading("Prozent", text="Prozent")
+        self.table.grid(row=2, column=0, columnspan=3, sticky="nsew")
 
-        self.threshold_label = tk.Label(self.info_frame, text="Prozent: 0")
-        self.threshold_label.pack(side="left")
-
-        self.debug_check = tk.Checkbutton(self.info_frame, text="Debug", command=self.toggle_debug)
-        self.debug_check.pack(side="left")
-
-        self.table = Table(self.root, self.save_table_data)
-        self.table.pack(expand=True, fill="both")
-
-    def save_table_data(self):
-        data = self.table.get_data()
-        save_window_position(self.root, data)
-
-    def toggle_debug(self):
-        if not self.debug_window:
-            self.debug_window = DebugWindow(self.root)
-        else:
-            self.debug_window.window.destroy()
-            self.debug_window = None
+    def start_clipboard_monitor(self):
+        thresholds = [
+            {'ISK': 1.0, 'Prozent': 75},
+            {'ISK': 2000000.0, 'Prozent': 70},
+            {'ISK': 4000000.0, 'Prozent': 65},
+            {'ISK': 8000000.0, 'Prozent': 60},
+            {'ISK': 16000000.0, 'Prozent': 55},
+            {'ISK': 32000000.0, 'Prozent': 50},
+        ]
+        Thread(
+            target=monitor_clipboard,
+            args=(
+                thresholds,
+                self.append_debug_log,
+                self.input_label,
+                self.output_label,
+                self.threshold_label,
+                self.root
+            ),
+            daemon=True
+        ).start()
 
     def append_debug_log(self, message):
-        if self.debug_window:
-            self.debug_window.log(message)
+        self.debug_logs.append(message)
+        print(message)
+
+    def on_close(self):
+        save_window_position(self.root)
+        self.root.destroy()
