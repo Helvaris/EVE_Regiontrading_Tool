@@ -4,6 +4,10 @@ from threading import Thread
 from clipboard_monitor import monitor_clipboard
 from config import save_window_position, restore_window_position
 
+restore_window_position(root)
+
+root.protocol("WM_DELETE_WINDOW", lambda: [save_window_position(root), root.destroy()])
+
 class MainGUI:
     def __init__(self, root):
         self.root = root
@@ -29,22 +33,30 @@ class MainGUI:
         self.table.heading("ISK", text="ISK")
         self.table.heading("Prozent", text="Prozent")
         self.table.grid(row=2, column=0, columnspan=3, sticky="nsew")
+    
+    def add_row(self):
+        self.table.add_row("0", "0")
+
+    def delete_row(self):
+        self.table.delete_selected_row()
 
     def toggle_debug_window(self):
-        if self.debug_window and self.debug_window.winfo_exists():
-            self.debug_window.deiconify()
-            return
+        if self.debug_var.get() and not self.debug_window:
+            self.debug_window = tk.Toplevel(self.root)
+            self.debug_window.title("Debug-Fenster")
+            self.debug_window.geometry("600x400")
+            self.debug_log = tk.Text(self.debug_window, state="normal")
+            self.debug_log.pack(fill=tk.BOTH, expand=True)
 
-        self.debug_window = tk.Toplevel(self.root)
-        self.debug_window.title("Debug-Fenster")
-        self.debug_window.geometry("600x400")
-        self.debug_log = tk.Text(self.debug_window, state="disabled")
-        self.debug_log.pack(fill=tk.BOTH, expand=True)
+            def close_debug_window():
+                self.debug_window.destroy()
+                self.debug_window = None
+                self.debug_var.set(0)
 
-        def close_debug_window():
-            self.debug_window.withdraw()  # Debug-Fenster nur verstecken
-
-        self.debug_window.protocol("WM_DELETE_WINDOW", close_debug_window)
+            self.debug_window.protocol("WM_DELETE_WINDOW", close_debug_window)
+        elif not self.debug_var.get() and self.debug_window:
+            self.debug_window.destroy()
+            self.debug_window = None
 
     def start_clipboard_monitor(self):
         thresholds = [
