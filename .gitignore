@@ -1,3 +1,6 @@
+#Notes Ordner ignorieren dieser ist nur für mich wichtig
+Notes/
+
 # Config File
 *.json
 
