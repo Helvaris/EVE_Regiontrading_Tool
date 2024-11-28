@@ -1,5 +1,5 @@
 from tkinter import ttk, Toplevel
-from .config import restore_window_position, save_window_position
+from config import restore_window_position, save_window_position
 from .table import Table
 from .debug import DebugWindow
 from clipboard_monitor import monitor_clipboard
@@ -10,10 +10,10 @@ class MainGUI:
         self.root = root
         self.root.title("EVE Region Trading Tool")
         restore_window_position(self.root)
+        self.thresholds = []  # Schwellenwerte für Clipboard
         self.create_ui()
         self.debug_window = None
         self.debug_enabled = False
-        self.thresholds = []  # Schwellenwerte für Clipboard
 
         # Starte Clipboard-Monitor in eigenem Thread
         threading.Thread(
@@ -21,6 +21,8 @@ class MainGUI:
             args=(self.thresholds, self.append_debug_log, self.input_label, self.output_label, self.threshold_label, root),
             daemon=True
         ).start()
+
+        self.root.protocol("WM_DELETE_WINDOW", self.on_close)
 
     def create_ui(self):
         self.input_label = ttk.Label(self.root, text="Eingabe: ---")
